@@ -1,0 +1,63 @@
+name: Update profile stats
+
+on:
+  # Runs after uploading the profile, and when its generation code changes.
+  push:
+    paths:
+      - README.md
+      - .github/workflows/update-stats.yml
+      - .github/scripts/generate-stats.mjs
+  workflow_dispatch:
+  schedule:
+    - cron: "17 3 * * *" # Daily at 11:17 Asia/Shanghai (03:17 UTC).
+
+permissions:
+  contents: write
+
+concurrency:
+  group: profile-stats-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    # Write cards only to the default branch, including manual runs.
+    if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out profile
+        uses: actions/checkout@v4
+
+      - name: Check out original GitHub Readme Stats
+        uses: actions/checkout@v4
+        with:
+          repository: anuraghazra/github-readme-stats
+          ref: 54a7985aeefda00d5eadb55b80c17c7f976c37d2
+          path: .cache/github-readme-stats
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Install renderer dependencies
+        working-directory: .cache/github-readme-stats
+        run: npm ci --omit=dev --ignore-scripts --no-audit --no-fund
+
+      - name: Generate light and dark cards
+        env:
+          PAT_1: ${{ secrets.GITHUB_TOKEN }}
+        run: node .github/scripts/generate-stats.mjs
+
+      - name: Commit changed cards
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add profile/*.svg
+          if git diff --cached --quiet; then
+            echo "Cards are unchanged."
+            exit 0
+          fi
+          git commit -m "chore: update profile stats"
+          git push
