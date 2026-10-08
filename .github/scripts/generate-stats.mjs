@@ -2,6 +2,10 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 
+if (!process.env.PAT_1) {
+  throw new Error("Missing PROFILE_STATS_TOKEN. Configure this Actions secret with a personal access token that can read public repositories; the workflow passes it as PAT_1.");
+}
+
 // The workflow checks out the original, pinned anuraghazra component here.
 const source = resolve(process.env.STATS_SOURCE || ".cache/github-readme-stats");
 const load = (file) => import(pathToFileURL(resolve(source, file)).href);
@@ -14,9 +18,6 @@ const [{ fetchStats }, { fetchTopLanguages }, { renderStatsCard }, { renderTopLa
   ]);
 
 const username = "KevinGuo1007";
-if (!process.env.PAT_1) {
-  throw new Error("PAT_1 is required. The workflow supplies its automatic GITHUB_TOKEN.");
-}
 
 // Fetch once per card type; reuse the data for both themes.
 // Fetchers throw on API errors, so failures never replace good cards with error SVGs.

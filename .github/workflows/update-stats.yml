@@ -28,6 +28,15 @@ jobs:
       - name: Check out profile
         uses: actions/checkout@v4
 
+      - name: Check stats read token
+        env:
+          PROFILE_STATS_TOKEN: ${{ secrets.PROFILE_STATS_TOKEN }}
+        run: |
+          if [ -z "$PROFILE_STATS_TOKEN" ]; then
+            echo "::error::Missing PROFILE_STATS_TOKEN. Add a personal access token with read access to public repositories in Settings > Secrets and variables > Actions. GITHUB_TOKEN is scoped to this repository and cannot read account-wide statistics."
+            exit 1
+          fi
+
       - name: Check out original GitHub Readme Stats
         uses: actions/checkout@v4
         with:
@@ -47,7 +56,9 @@ jobs:
 
       - name: Generate light and dark cards
         env:
-          PAT_1: ${{ secrets.GITHUB_TOKEN }}
+          # Read public account stats with a dedicated user token.
+          # Checkout and git push still use the repository's GITHUB_TOKEN.
+          PAT_1: ${{ secrets.PROFILE_STATS_TOKEN }}
         run: node .github/scripts/generate-stats.mjs
 
       - name: Commit changed cards
