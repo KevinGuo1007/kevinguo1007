@@ -11,8 +11,8 @@ Interested in automation, developer productivity, and reliable software.
 
 <a href="https://github.com/tandpfun/skill-icons">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://skillicons.dev/icons?i=rust,python,fastapi,js,ts,nuxt,tailwind,docker&amp;theme=dark&amp;perline=8">
-    <img src="https://skillicons.dev/icons?i=rust,python,fastapi,js,ts,nuxt,tailwind,docker&amp;theme=light&amp;perline=8" alt="Rust, Python, FastAPI, JavaScript, TypeScript, Nuxt, Tailwind CSS, Docker" width="416" height="48">
+    <source media="(prefers-color-scheme: dark)" srcset="https://skillicons.dev/icons?i=rust%2Cpython%2Cfastapi%2Cjs%2Cts%2Cnuxt%2Ctailwind%2Cdocker&amp;theme=dark&amp;perline=8">
+    <img src="https://skillicons.dev/icons?i=rust%2Cpython%2Cfastapi%2Cjs%2Cts%2Cnuxt%2Ctailwind%2Cdocker&amp;theme=light&amp;perline=8" alt="Rust, Python, FastAPI, JavaScript, TypeScript, Nuxt, Tailwind CSS, Docker" width="416" height="48">
   </picture>
 </a>
 
