@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 
@@ -8,6 +8,27 @@ if (!process.env.PAT_1) {
 
 // The workflow checks out the original, pinned anuraghazra component here.
 const source = resolve(process.env.STATS_SOURCE || ".cache/github-readme-stats");
+
+// The pinned upstream predates GitHub's restrictions on the stargazers list.
+// Read the public count directly, including both pagination and aggregation.
+// Apply this to the temporary checkout on every workflow run, before importing it.
+const statsFile = resolve(source, "src/fetchers/stats.js");
+const statsSource = await readFile(statsFile, "utf8");
+const legacyQuery = /stargazers\s*\{\s*totalCount\s*\}/g;
+const legacyRead = /\.stargazers\.totalCount/g;
+const queryCount = [...statsSource.matchAll(legacyQuery)].length;
+const readCount = [...statsSource.matchAll(legacyRead)].length;
+if (queryCount === 1 && readCount === 2) {
+  await writeFile(
+    statsFile,
+    statsSource.replace(legacyQuery, "stargazerCount").replace(legacyRead, ".stargazerCount"),
+    "utf8",
+  );
+  console.log("Updated legacy stars query to stargazerCount.");
+} else if (queryCount !== 0 || readCount !== 0 || !statsSource.includes("stargazerCount")) {
+  throw new Error("Unexpected upstream stats source; cannot safely apply the stars-query compatibility fix.");
+}
+
 const load = (file) => import(pathToFileURL(resolve(source, file)).href);
 const [{ fetchStats }, { fetchTopLanguages }, { renderStatsCard }, { renderTopLanguages }] =
   await Promise.all([
