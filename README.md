@@ -21,7 +21,7 @@ Interested in automation, developer productivity, and reliable software.
 <p>
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="./profile/stats-dark.svg">
-    <img src="./profile/stats-light.svg" alt="Kevin Guo's GitHub statistics" width="390" height="165">
+    <img src="./profile/stats-light.svg" alt="Kevin Guo's GitHub statistics and rank" width="450" height="165">
   </picture>
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="./profile/languages-dark.svg">

@@ -69,8 +69,9 @@ for (const [theme, colors] of Object.entries({
       ...shared,
       custom_title: "GitHub Stats",
       show_icons: true,
-      hide_rank: true,
-      card_width: 390,
+      hide_rank: false,
+      rank_icon: "default",
+      card_width: 450,
       line_height: 20,
     }),
   ]);
